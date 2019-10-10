@@ -4,6 +4,7 @@ from typing import Optional, Dict, Type, Iterable, Iterator, Tuple
 import toml
 from cleo import Command
 
+CORE_NAMESPACE = "core"
 PROJECTS_KEY = "projects"
 GROUPS_KEY = "groups"
 
@@ -17,6 +18,7 @@ class BaseCommand(Command):
     def __init__(self):
         super().__init__()
         self.config_file = self.config_file.resolve()
+        self.root = Path(".").resolve()
 
     def subcommand(self, cls: Type[Command]):
         """A decorator to add a command class as a subcommand."""
@@ -61,4 +63,4 @@ class BaseCommand(Command):
             return toml.dump(data, file)
 
     def _get_projects(self) -> Dict[str, Dict]:
-        return self.get_config().get(PROJECTS_KEY, {})
+        return self.get_config(CORE_NAMESPACE).get(PROJECTS_KEY, {})

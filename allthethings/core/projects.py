@@ -1,16 +1,13 @@
 from pathlib import Path
-from typing import Dict
 
-from .base import BaseCommand, GROUPS_KEY, PROJECTS_KEY
+from .base import BaseCommand, GROUPS_KEY, PROJECTS_KEY, CORE_NAMESPACE
 
 __all__ = ["ListProjects", "AddProject", "RemoveProject"]
-
-_CONFIG = Path("./.allthethings.toml")
 
 
 class _CoreCommand(BaseCommand):
     """A command with explicitly defined config namespace."""
-    namespace = "core"
+    namespace = CORE_NAMESPACE
 
 
 class ListProjects(_CoreCommand):

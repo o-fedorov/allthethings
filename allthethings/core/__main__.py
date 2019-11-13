@@ -9,6 +9,5 @@ application.add(AddProject())
 application.add(RemoveProject())
 application.add(Execute())
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     application.run()
-

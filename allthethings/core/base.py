@@ -20,10 +20,6 @@ class BaseCommand(Command):
         self.config_file = self.config_file.resolve()
         self.root = Path(".").resolve()
 
-    def subcommand(self, cls: Type[Command]):
-        """A decorator to add a command class as a subcommand."""
-        self.add_sub_command(cls())
-
     def get_config(self, namespace: Optional[str] = None):
         """Get config for given or default namespace."""
         namespace = self._real_namespace(namespace)
@@ -35,7 +31,9 @@ class BaseCommand(Command):
         config[namespace] = data
         self._dump_config(config)
 
-    def list_projects(self, groups: Optional[Iterable] = None) -> Iterator[Tuple[str, Dict]]:
+    def list_projects(
+        self, groups: Optional[Iterable] = None
+    ) -> Iterator[Tuple[str, Dict]]:
         """Generate project names and their config for given or all groups."""
         for key, conf in self._get_projects().items():
             cur_groups = conf.get(GROUPS_KEY, [])

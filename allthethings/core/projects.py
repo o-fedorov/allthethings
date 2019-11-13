@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from .base import BaseCommand, GROUPS_KEY, PROJECTS_KEY, CORE_NAMESPACE
 
 __all__ = ["ListProjects", "AddProject", "RemoveProject"]
@@ -7,6 +5,7 @@ __all__ = ["ListProjects", "AddProject", "RemoveProject"]
 
 class _CoreCommand(BaseCommand):
     """A command with explicitly defined config namespace."""
+
     namespace = CORE_NAMESPACE
 
 

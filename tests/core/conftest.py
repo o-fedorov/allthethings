@@ -27,14 +27,14 @@ def application(tempdir: Path):
 
 @pytest.fixture
 def list_(application):
-    return CommandTester(application.find('list'))
+    return CommandTester(application.find("list"))
 
 
 @pytest.fixture
 def add_(application):
-    return CommandTester(application.find('add'))
+    return CommandTester(application.find("add"))
 
 
 @pytest.fixture
 def del_(application):
-    return CommandTester(application.find('del'))
+    return CommandTester(application.find("del"))

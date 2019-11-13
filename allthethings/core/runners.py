@@ -51,10 +51,13 @@ class Execute(BaseCommand):
                 err = res.stderr
 
             print_key = f" { key } "
-            print(f"{ print_key :=^70}\n{ out.decode() }\n{ '='*70 }\n{ err.decode() }\n")
+            print(
+                f"{ print_key :=^70}\n{ out.decode() }\n{ '='*70 }\n{ err.decode() }\n"
+            )
             results.append(result)
 
         self.render_table(
-            headers=["", "", ""], rows=[[r.icon, r.name, r.comment] for r in results],
-            style="compact"
+            headers=["", "", ""],
+            rows=[[r.icon, r.name, r.comment] for r in results],
+            style="compact",
         )

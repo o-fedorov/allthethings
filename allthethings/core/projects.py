@@ -29,7 +29,9 @@ class ListProjects(_CoreCommand):
         for key, conf in self.list_projects(groups):
             cur_groups = conf.get(GROUPS_KEY, [])
             output.append((key, ", ".join(cur_groups)))
+        self._print_output(output)
 
+    def _print_output(self, output):
         if self.io.is_verbose():
             self.render_table(["Project", "Groups"], output)
         else:
@@ -54,12 +56,12 @@ class AddProject(_CoreCommand):
         groups = self.option("group") or []
 
         for name in names:
-            project_conf = projects.setdefault(name, {})
+            projects.setdefault(name, {})
 
-            cur_groups = project_conf.get(GROUPS_KEY, [])
+            cur_groups = projects[name].get(GROUPS_KEY, [])
             cur_groups.extend(groups)
 
-            project_conf[GROUPS_KEY] = sorted(set(cur_groups))
+            projects[name][GROUPS_KEY] = sorted(set(cur_groups))
 
         self.set_config({PROJECTS_KEY: projects})
 
@@ -85,9 +87,9 @@ class RemoveProject(_CoreCommand):
                 projects.pop(name)
                 continue
 
-            project_conf = projects.setdefault(name, {})
+            projects.setdefault(name, {})
 
-            cur_groups = project_conf.get(GROUPS_KEY, [])
-            project_conf[GROUPS_KEY] = [g for g in cur_groups if g not in groups]
+            cur_groups = projects[name].get(GROUPS_KEY, [])
+            projects[name][GROUPS_KEY] = [g for g in cur_groups if g not in groups]
 
         self.set_config({PROJECTS_KEY: projects})

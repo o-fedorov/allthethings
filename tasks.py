@@ -11,32 +11,37 @@ class _CollectFailures:
 
     def run(self, command: str, **kwargs):
         kwargs.setdefault("warn", True)
-        result: Result = self._ctx.run(command, **kwargs)
-        if result.ok:
+        cmd_result: Result = self._ctx.run(command, **kwargs)
+        if cmd_result.ok:
             self._ctx.run("echo Ok")
         else:
-            self._failed.append(result)
+            self._failed.append(cmd_result)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        for result in self._failed:
-            raise UnexpectedExit(result)
+        if self._failed:
+            raise UnexpectedExit(self._failed[0])
 
 
 @task
 def test(ctx):
     """Run tests."""
-    ctx.run("poetry run pytest --cov .")
+    ctx.run("poetry run pytest --cov -vv .")
 
 
 @task
 def check(ctx):
     """Run static checks."""
     with _CollectFailures(ctx) as new_ctx:
+        print("Checking Black formatting.")
         new_ctx.run("poetry run black . --check")
+
+        print("Checking the style.")
         new_ctx.run("poetry run flake8")
+
+        print("Checking the libraries.")
         new_ctx.run("poetry run safety check")
 
 

@@ -1,8 +1,11 @@
+"""Base application functionality."""
 from pathlib import Path
-from typing import Dict, Iterable, Iterator, Optional, Tuple, Type
+from typing import Dict, Iterable, Iterator, Optional, Tuple
 
 import toml
 from cleo import Command
+
+__all__ = ["BaseCommand"]
 
 CORE_NAMESPACE = "core"
 PROJECTS_KEY = "projects"
@@ -25,11 +28,12 @@ class BaseCommand(Command):
         namespace = self._real_namespace(namespace)
         return self._load_config().get(namespace, {})
 
-    def set_config(self, data: Dict, namespace: Optional[str] = None):
+    def set_config(self, config: Dict, namespace: Optional[str] = None):
+        """Set config for given or default namespace."""
         namespace = self._real_namespace(namespace)
-        config = self._load_config()
-        config[namespace] = data
-        self._dump_config(config)
+        full_config = self._load_config()
+        full_config[namespace] = config
+        self._dump_config(full_config)
 
     def list_projects(
         self, groups: Optional[Iterable] = None
@@ -56,9 +60,9 @@ class BaseCommand(Command):
         except FileNotFoundError:
             return {}
 
-    def _dump_config(self, data: Dict):
-        with self.config_file.open("w") as file:
-            return toml.dump(data, file)
+    def _dump_config(self, config: Dict):
+        with self.config_file.open("w") as out_file:
+            return toml.dump(config, out_file)
 
     def _get_projects(self) -> Dict[str, Dict]:
         return self.get_config(CORE_NAMESPACE).get(PROJECTS_KEY, {})

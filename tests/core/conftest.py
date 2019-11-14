@@ -1,3 +1,4 @@
+"""Fixtures and helpers used by tests."""
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -5,36 +6,53 @@ from tempfile import TemporaryDirectory
 import pytest
 from cleo import Application, CommandTester
 
-from allthethings.core import AddProject, ListProjects, RemoveProject
+from allthethings.core import AddProject, Execute, ListProjects, RemoveProject
+
+
+def execute(command: CommandTester, *args, **kwargs):
+    """Shorthand function to execute a command and check it's return code."""
+    res = command.execute(*args, **kwargs)
+    assert res == 0, command.io.fetch_error()
 
 
 @pytest.fixture
 def tempdir() -> Path:
-    with TemporaryDirectory(dir=os.getcwd()) as tempdir:
-        yield Path(tempdir)
+    """Temporary directory fixture."""
+    with TemporaryDirectory(dir=os.getcwd()) as temp_dir:
+        yield Path(temp_dir)
 
 
 @pytest.fixture
 def application(tempdir: Path):
-    application = Application()
-    for cls in [ListProjects, AddProject, RemoveProject]:
-        command = cls()
+    """Commandline application fixture."""
+    app = Application()
+    for cmd_class in (ListProjects, AddProject, RemoveProject, Execute):
+        command = cmd_class()
         command.config_file = tempdir / "config.toml"
-        application.add(command)
+        app.add(command)
 
-    return application
+    return app
 
 
 @pytest.fixture
-def list_(application):
+def list_cmd(application):
+    """`allthethings list` command fixture."""
     return CommandTester(application.find("list"))
 
 
 @pytest.fixture
-def add_(application):
+def add_cmd(application):
+    """`allthethings add` command fixture."""
     return CommandTester(application.find("add"))
 
 
 @pytest.fixture
-def del_(application):
+def del_cmd(application):
+    """`allthethings del` command fixture."""
     return CommandTester(application.find("del"))
+
+
+@pytest.fixture
+def exec_cmd(application):
+    """`allthethings exec` command fixture."""
+    return CommandTester(application.find("exec"))

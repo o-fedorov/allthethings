@@ -1,31 +1,29 @@
+"""Tests of the core projects management."""
 from textwrap import dedent
 
-
-def execute(command, *args, **kwargs):
-    result = command.execute(*args, **kwargs)
-    assert result == 0, command.io.fetch_error()
+from .conftest import execute
 
 
-def test_list_empty(list_):
-    execute(list_)
-    assert list_.io.fetch_output() == ""
+def test_list_empty(list_cmd):
+    execute(list_cmd)
+    assert list_cmd.io.fetch_output() == ""
 
 
-def test_list_empty_verbose(list_):
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == ""
+def test_list_empty_verbose(list_cmd):
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == ""
 
 
-def test_add_and_list(list_, add_):
-    execute(add_, "project1")
-    execute(list_)
-    assert list_.io.fetch_output() == "project1\n"
+def test_add_and_list(list_cmd, add_cmd):
+    execute(add_cmd, "project1")
+    execute(list_cmd)
+    assert list_cmd.io.fetch_output() == "project1\n"
 
 
-def test_add_and_list_verbose(list_, add_):
-    execute(add_, "project1")
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == dedent(
+def test_add_and_list_verbose(list_cmd, add_cmd):
+    execute(add_cmd, "project1")
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == dedent(
         """\
         +----------+--------+
         | Project  | Groups |
@@ -36,16 +34,16 @@ def test_add_and_list_verbose(list_, add_):
     )
 
 
-def test_add_to_group(list_, add_):
-    execute(add_, "project1 -g group1")
-    execute(list_)
-    assert list_.io.fetch_output() == "project1\n"
+def test_add_to_group(list_cmd, add_cmd):
+    execute(add_cmd, "project1 -g group1")
+    execute(list_cmd)
+    assert list_cmd.io.fetch_output() == "project1\n"
 
 
-def test_add_to_group_verbose(list_, add_):
-    execute(add_, "project1 -g group1")
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == dedent(
+def test_add_to_group_verbose(list_cmd, add_cmd):
+    execute(add_cmd, "project1 -g group1")
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == dedent(
         """\
         +----------+--------+
         | Project  | Groups |
@@ -56,12 +54,12 @@ def test_add_to_group_verbose(list_, add_):
     )
 
 
-def test_append_to_group_twice(list_, add_):
-    execute(add_, "project1")
-    execute(add_, "project1 -g group1")
-    execute(add_, "project1 -g group1")
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == dedent(
+def test_append_to_group_twice(list_cmd, add_cmd):
+    execute(add_cmd, "project1")
+    execute(add_cmd, "project1 -g group1")
+    execute(add_cmd, "project1 -g group1")
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == dedent(
         """\
         +----------+--------+
         | Project  | Groups |
@@ -72,12 +70,12 @@ def test_append_to_group_twice(list_, add_):
     )
 
 
-def test_append_to_groups_sequentially(list_, add_):
-    execute(add_, "project1")
-    execute(add_, "project1 -g group1")
-    execute(add_, "project1 -g group0")
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == dedent(
+def test_append_to_groups_sequentially(list_cmd, add_cmd):
+    execute(add_cmd, "project1")
+    execute(add_cmd, "project1 -g group1")
+    execute(add_cmd, "project1 -g group0")
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == dedent(
         """\
         +----------+----------------+
         | Project  | Groups         |
@@ -88,11 +86,11 @@ def test_append_to_groups_sequentially(list_, add_):
     )
 
 
-def test_append_to_groups_simultaneously(list_, add_):
-    execute(add_, "project1")
-    execute(add_, "project1 -g group1 -g group0")
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == dedent(
+def test_append_to_groups_simultaneously(list_cmd, add_cmd):
+    execute(add_cmd, "project1")
+    execute(add_cmd, "project1 -g group1 -g group0")
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == dedent(
         """\
         +----------+----------------+
         | Project  | Groups         |
@@ -103,10 +101,10 @@ def test_append_to_groups_simultaneously(list_, add_):
     )
 
 
-def test_append_to_groups_simultaneously_v2(list_, add_):
-    execute(add_, "project1 -g group1 -g group0")
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == dedent(
+def test_append_to_groups_simultaneously_v2(list_cmd, add_cmd):
+    execute(add_cmd, "project1 -g group1 -g group0")
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == dedent(
         """\
         +----------+----------------+
         | Project  | Groups         |
@@ -117,11 +115,11 @@ def test_append_to_groups_simultaneously_v2(list_, add_):
     )
 
 
-def test_remove_from_group(list_, add_, del_):
-    execute(add_, "project1 -g group1 -g group0")
-    execute(del_, "project1 -g group1")
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == dedent(
+def test_remove_from_group(list_cmd, add_cmd, del_cmd):
+    execute(add_cmd, "project1 -g group1 -g group0")
+    execute(del_cmd, "project1 -g group1")
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == dedent(
         """\
         +----------+--------+
         | Project  | Groups |
@@ -132,11 +130,11 @@ def test_remove_from_group(list_, add_, del_):
     )
 
 
-def test_remove_from_all_groups(list_, add_, del_):
-    execute(add_, "project1 -g group1 -g group0")
-    execute(del_, "project1 -g group1 -g group0")
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == dedent(
+def test_remove_from_all_groups(list_cmd, add_cmd, del_cmd):
+    execute(add_cmd, "project1 -g group1 -g group0")
+    execute(del_cmd, "project1 -g group1 -g group0")
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == dedent(
         """\
         +----------+--------+
         | Project  | Groups |
@@ -147,12 +145,12 @@ def test_remove_from_all_groups(list_, add_, del_):
     )
 
 
-def test_remove_from_missing_group(list_, add_, del_):
-    execute(add_, "project1 -g group1 -g group0")
-    execute(del_, "project1 -g group2")
+def test_remove_from_missing_group(list_cmd, add_cmd, del_cmd):
+    execute(add_cmd, "project1 -g group1 -g group0")
+    execute(del_cmd, "project1 -g group2")
 
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == dedent(
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == dedent(
         """\
         +----------+----------------+
         | Project  | Groups         |
@@ -163,9 +161,9 @@ def test_remove_from_missing_group(list_, add_, del_):
     )
 
 
-def test_remove_from_registry(list_, add_, del_):
-    execute(add_, "project1 -g group1 -g group0")
-    execute(del_, "project1")
+def test_remove_from_registry(list_cmd, add_cmd, del_cmd):
+    execute(add_cmd, "project1 -g group1 -g group0")
+    execute(del_cmd, "project1")
 
-    execute(list_, verbosity=1)
-    assert list_.io.fetch_output() == ""
+    execute(list_cmd, verbosity=1)
+    assert list_cmd.io.fetch_output() == ""

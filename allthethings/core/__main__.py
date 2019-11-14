@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from cleo import Application
 
-from allthethings.core import ListProjects, AddProject, RemoveProject, Execute
+from allthethings.core import AddProject, Execute, ListProjects, RemoveProject
 
 application = Application()
 application.add(ListProjects())

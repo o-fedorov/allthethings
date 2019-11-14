@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Dict, Type, Iterable, Iterator, Tuple
+from typing import Dict, Iterable, Iterator, Optional, Tuple, Type
 
 import toml
 from cleo import Command

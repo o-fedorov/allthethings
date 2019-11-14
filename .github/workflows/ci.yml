@@ -39,7 +39,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Code Quality
-        run: poetry run black . --check
+        run: inv check
 
       - name: Test
-        run: poetry run pytest --cov .
+        run: inv test

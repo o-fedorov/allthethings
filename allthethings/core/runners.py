@@ -1,12 +1,22 @@
 """Support for per-project commands run."""
 import subprocess  # noqa: S404
 from dataclasses import dataclass
+from textwrap import dedent
 
 from .base import BaseCommand
 
 __all__ = ["Result", "Execute"]
 
-RESULTS_TABLE_STYLE = "compact"
+SEPARATOR_STYLE = "="
+SEPARATOR_LEN = 70
+OUT_TEMPLATE = dedent(
+    f"""\
+        {{key:{SEPARATOR_STYLE}^{SEPARATOR_LEN}}}
+        {{out}}
+        {SEPARATOR_STYLE * SEPARATOR_LEN}
+        {{err}}
+    """
+)
 
 
 @dataclass
@@ -55,20 +65,19 @@ class Execute(BaseCommand):
             except subprocess.CalledProcessError as error:
                 resp_raw = error.stderr if error.stderr else error.output
                 execution_result.set_error(resp_raw.decode())
-                out = error.output
-                err = error.stderr
+                self._print_result(key, error.output, error.stderr)
             else:
-                out = res.stdout
-                err = res.stderr
+                self._print_result(key, res.stdout, res.stderr)
 
-            print_key = f" { key } "
-            self.line(
-                f"{ print_key :=^70}\n{ out.decode() }\n{ '='*70 }\n{ err.decode() }\n"
-            )
             execution_results.append(execution_result)
 
         self.render_table(
             headers=[],
             rows=[[r.icon, r.name, r.comment] for r in execution_results],
-            style=RESULTS_TABLE_STYLE,
+            style="compact",
+        )
+
+    def _print_result(self, key: str, out: bytes, err: bytes):
+        self.line(
+            OUT_TEMPLATE.format(key=f" {key} ", out=out.decode(), err=err.decode())
         )

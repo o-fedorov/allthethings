@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 import pytest
 from cleo import Application, CommandTester
 
-from allthethings.core import ListProjects, AddProject, RemoveProject
+from allthethings.core import AddProject, ListProjects, RemoveProject
 
 
 @pytest.fixture

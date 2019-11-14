@@ -1,6 +1,5 @@
 import os
 import subprocess
-
 from dataclasses import dataclass
 
 from .base import BaseCommand

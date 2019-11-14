@@ -1,4 +1,4 @@
-from .base import BaseCommand, GROUPS_KEY, PROJECTS_KEY, CORE_NAMESPACE
+from .base import CORE_NAMESPACE, GROUPS_KEY, PROJECTS_KEY, BaseCommand
 
 __all__ = ["ListProjects", "AddProject", "RemoveProject"]
 

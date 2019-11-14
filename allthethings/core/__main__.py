@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+"""Main application entry point."""
 from cleo import Application
 
 from allthethings.core import AddProject, Execute, ListProjects, RemoveProject

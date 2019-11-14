@@ -1,3 +1,6 @@
+"""Projects registry manipulation."""
+from typing import List, Tuple
+
 from .base import CORE_NAMESPACE, GROUPS_KEY, PROJECTS_KEY, BaseCommand
 
 __all__ = ["ListProjects", "AddProject", "RemoveProject"]
@@ -18,18 +21,19 @@ class ListProjects(_CoreCommand):
 
     """
 
-    def handle(self):
+    def handle(self):  # noqa: WPS110
+        """Handle the command."""
         groups = set(self.option("group") or {})
 
-        result = []
+        output: List[Tuple[str, str]] = []
         for key, conf in self.list_projects(groups):
             cur_groups = conf.get(GROUPS_KEY, [])
-            result.append([key, ", ".join(cur_groups)])
+            output.append((key, ", ".join(cur_groups)))
 
         if self.io.is_verbose():
-            self.render_table(["Project", "Groups"], result)
+            self.render_table(["Project", "Groups"], output)
         else:
-            for row in result:
+            for row in output:
                 self.line(row[0])
 
 
@@ -43,7 +47,8 @@ class AddProject(_CoreCommand):
             If a project is already registered, just append it to groups.}
     """
 
-    def handle(self):
+    def handle(self):  # noqa: WPS110
+        """Handle the command."""
         projects = self._get_projects()
         names = self.argument("name")
         groups = self.option("group") or []
@@ -69,7 +74,8 @@ class RemoveProject(_CoreCommand):
             If not provided, completely remove a project from a registry.}
     """
 
-    def handle(self):
+    def handle(self):  # noqa: WPS110
+        """Handle the command."""
         projects = self._get_projects()
         names = self.argument("name")
         groups = self.option("group") or []

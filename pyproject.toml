@@ -10,7 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-cleo = "^0.7.5"
+cleo = "^0.7.6"
 toml = "^0.10.0"
 
 [tool.poetry.dev-dependencies]

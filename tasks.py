@@ -41,6 +41,9 @@ def check(ctx):
         print("Checking the style.")
         new_ctx.run("poetry run flake8")
 
+        print("Checking type safety.")
+        new_ctx.run("poetry run mypy .")
+
         print("Checking the libraries.")
         new_ctx.run("poetry run safety check")
 

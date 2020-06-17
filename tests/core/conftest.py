@@ -16,7 +16,7 @@ def execute(command: CommandTester, *args, **kwargs):
 
 
 @pytest.fixture
-def tempdir() -> Path:
+def tempdir():
     """Temporary directory fixture."""
     with TemporaryDirectory(dir=os.getcwd()) as temp_dir:
         yield Path(temp_dir)
@@ -27,8 +27,7 @@ def application(tempdir: Path):
     """Commandline application fixture."""
     app = Application()
     for cmd_class in (ListProjects, AddProject, RemoveProject, Execute):
-        command = cmd_class()
-        command.config_file = tempdir / "config.toml"
+        command = cmd_class(config_file=tempdir / "config.toml")
         app.add(command)
 
     return app

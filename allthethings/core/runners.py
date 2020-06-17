@@ -66,11 +66,7 @@ class Execute(BaseCommand):
 
         try:
             res = subprocess.run(
-                " ".join(cmd),
-                cwd=cwd,
-                shell=True,  # noqa: S602
-                check=True,
-                capture_output=True,
+                " ".join(cmd), cwd=cwd, shell=True, check=True, capture_output=True,  # noqa: S602
             )
         except subprocess.CalledProcessError as error:
             resp_raw = error.stderr if error.stderr else error.output
@@ -82,6 +78,5 @@ class Execute(BaseCommand):
         return execution_result
 
     def _print_result(self, key: str, out: bytes, err: bytes):
-        self.line(
-            OUT_TEMPLATE.format(key=f" {key} ", out=out.decode(), err=err.decode())
-        )
+        key = f" {key} "
+        self.line(OUT_TEMPLATE.format(key=key, out=out.decode(), err=err.decode()))

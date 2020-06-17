@@ -51,7 +51,7 @@ class AddProject(_CoreCommand):
 
     def handle(self):  # noqa: WPS110
         """Handle the command."""
-        projects = self._get_projects()
+        projects = dict(self.list_projects())
         names = self.argument("name")
         groups = self.option("group") or []
 
@@ -63,7 +63,7 @@ class AddProject(_CoreCommand):
 
             projects[name][GROUPS_KEY] = sorted(set(cur_groups))
 
-        self.set_config({PROJECTS_KEY: projects})
+        self.cmd_config.set({PROJECTS_KEY: projects})
 
 
 class RemoveProject(_CoreCommand):
@@ -78,7 +78,7 @@ class RemoveProject(_CoreCommand):
 
     def handle(self):  # noqa: WPS110
         """Handle the command."""
-        projects = self._get_projects()
+        projects = dict(self.list_projects())
         names = self.argument("name")
         groups = self.option("group") or []
 
@@ -92,4 +92,4 @@ class RemoveProject(_CoreCommand):
             cur_groups = projects[name].get(GROUPS_KEY, [])
             projects[name][GROUPS_KEY] = [g for g in cur_groups if g not in groups]
 
-        self.set_config({PROJECTS_KEY: projects})
+        self.cmd_config.set({PROJECTS_KEY: projects})

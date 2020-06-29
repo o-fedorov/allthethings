@@ -17,6 +17,7 @@ OUT_TEMPLATE = dedent(
         {{err}}
     """
 )
+ENV_PREFIX = "ALLTHETHINGS_"
 
 
 @dataclass
@@ -32,14 +33,30 @@ class Result:
         self.icon = "⛔"
         self.comment = text
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if not exc_val:
+            return
+
+        if isinstance(exc_val, subprocess.CalledProcessError):
+            resp_raw = exc_val.stderr if exc_val.stderr else exc_val.output
+            self.set_error(resp_raw.decode())
+        else:
+            self.set_error(str(exc_val))
+
 
 class Execute(BaseCommand):
     """
-    Execute arbitrary shell command for each repo.
+    Execute arbitrary shell command for each project.
 
     exec
         {--g|group=?* : Run only for the projects of specific group.}
-        {cmd* : The command to run.}
+        {cmd* : The command to run.  The commands
+         are executed at the root of a project.
+         Use `ALLTHETHINGS_PROJECT_NAME` and `ALLTHETHINGS_PROJECT_PATH`
+         environment variables to refer to the project name and path.}
 
     """
 
@@ -61,16 +78,21 @@ class Execute(BaseCommand):
 
     def _run_for_project(self, key, cmd) -> Result:
         path = self.root / key
+        env = {f"{ENV_PREFIX}PROJECT_NAME": key, f"{ENV_PREFIX}PROJECT_PATH": path}
         cwd = path if path.exists() else self.root
         execution_result = Result(key)
 
         try:
-            res = subprocess.run(
-                " ".join(cmd), cwd=cwd, shell=True, check=True, capture_output=True,  # noqa: S602
-            )
+            with execution_result:
+                res = subprocess.run(
+                    " ".join(cmd),
+                    cwd=cwd,
+                    shell=True,  # noqa: S602
+                    check=True,
+                    capture_output=True,
+                    env=env,
+                )
         except subprocess.CalledProcessError as error:
-            resp_raw = error.stderr if error.stderr else error.output
-            execution_result.set_error(resp_raw.decode())
             self._print_result(key, error.output, error.stderr)
         else:
             self._print_result(key, res.stdout, res.stderr)

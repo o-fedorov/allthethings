@@ -1,21 +1,8 @@
 """Tests of the core projects management."""
-import difflib
-import re
+from pathlib import Path
 from textwrap import dedent
 
-import pytest
-
 from .conftest import execute
-
-
-def assert_re_match(actual, expected):
-    expected = dedent(expected)
-
-    if not re.match(expected, actual, flags=re.MULTILINE | re.DOTALL):
-        report = "".join(
-            difflib.ndiff(actual.splitlines(keepends=True), expected.splitlines(keepends=True))
-        )
-        pytest.fail(report)
 
 
 def test_empty(exec_cmd):
@@ -44,17 +31,16 @@ def test_envvars(exec_cmd, add_cmd):
     execute(
         exec_cmd, '-- echo "Name: $ALLTHETHINGS_PROJECT_NAME, path: $ALLTHETHINGS_PROJECT_PATH"'
     )
-    assert_re_match(
-        exec_cmd.io.fetch_output(),
-        """\
+    assert exec_cmd.io.fetch_output() == dedent(
+        f"""\
         ============================== project1 ==============================
-        Name: project1, path: .*/allthethings/tests/project1
+        Name: project1, path: { Path().joinpath("project1").resolve() }
 
         ======================================================================
 
 
         ✅ project1 Ok
-        """,
+        """
     )
 
 

@@ -1,4 +1,5 @@
 """Support for per-project commands run."""
+import os
 import subprocess  # noqa: S404
 from dataclasses import dataclass
 from textwrap import dedent
@@ -78,7 +79,8 @@ class Execute(BaseCommand):
 
     def _run_for_project(self, key, cmd) -> Result:
         path = self.root / key
-        env = {f"{ENV_PREFIX}PROJECT_NAME": key, f"{ENV_PREFIX}PROJECT_PATH": path}
+        env = os.environ.copy()
+        env.update({f"{ENV_PREFIX}PROJECT_NAME": key, f"{ENV_PREFIX}PROJECT_PATH": path})
         cwd = path if path.exists() else self.root
         execution_result = Result(key)
 

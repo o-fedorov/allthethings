@@ -4,7 +4,7 @@ from typing import Dict, Iterable, Iterator, Optional, Tuple
 
 import attr
 import toml
-from cleo import Command
+from cleo.commands.command import Command
 
 __all__ = ["BaseCommand"]
 
@@ -57,7 +57,7 @@ class Config:
 class BaseCommand(Command):
     """Command with config-aware methods."""
 
-    namespace = None
+    namespace: Optional[str] = None
 
     def __init__(self, config_file=".allthethings.toml"):
         super().__init__()

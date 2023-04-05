@@ -89,7 +89,7 @@ class Execute(BaseCommand):
         try:
             with execution_result:
                 res = subprocess.run(
-                    " ".join(cmd),
+                    cmd,
                     cwd=cwd,
                     shell=True,  # noqa: S602
                     check=True,

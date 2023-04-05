@@ -1,5 +1,5 @@
 """Main application entry point."""
-from cleo import Application
+from cleo.application import Application
 
 from allthethings.core import AddProject, Execute, ListProjects, RemoveProject
 
